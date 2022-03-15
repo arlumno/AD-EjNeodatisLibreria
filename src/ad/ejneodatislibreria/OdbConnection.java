@@ -19,10 +19,14 @@ public class OdbConnection {
         
     }
 
-    public static ODB getOdb() {
-        if(odb == null){
-            odb = ODBFactory.open(BASE_DATOS);
-        }
+    public static ODB getOdb() throws Exception {
+        if(odb == null || odb.isClosed()){
+            try{               
+                odb = ODBFactory.open(BASE_DATOS);
+            }catch(Exception e){
+                throw new Exception("Error: La base de datos está siendo usada.");
+            }
+        }        
         return odb;
     }
     
