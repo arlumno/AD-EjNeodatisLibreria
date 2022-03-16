@@ -43,6 +43,9 @@ public class App {
         menu.setTextoSalir("Salir");
         log.addToLog("Iniciado el programa");
 
+        menu.addOpcion("TEST", () -> {
+            app.test();
+        });
         //menu.addLabel("Altas");
         menu.addOpcion("Alta Autor", () -> {
             app.altaAutor();
@@ -86,7 +89,11 @@ public class App {
         
         menu.addOpcion("Datos Libro", () -> {
             app.listarDatosLibro();
-        });        
+        });    
+        
+        menu.addOpcion("Lista Autores y Libros", () -> {
+            app.listarAutoresYLibros();
+        });
         
         /* Log de libreriaAr 1.4 */
         menu.addLabel("LOG");
@@ -96,6 +103,7 @@ public class App {
         menu.addOpcion("Borrar Log", () -> {
             utilidades.Log.getInstance().borrarLog();
         });
+        
 
         return menu;
     }
