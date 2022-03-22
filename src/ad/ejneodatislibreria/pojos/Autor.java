@@ -18,6 +18,7 @@ public class Autor {
     private String nacionalidad;
     public static final String NACIONALIDAD_ESP = "ESPAÑOLA";
     public static final String NACIONALIDAD_IT = "ITALIANA";
+    public static final String NACIONALIDAD_FR = "FRANCESA";
     private ArrayList<Libro> libros;
 
     public Autor(String dni, String nombre, String direccion, int edad, String nacionalidad) {

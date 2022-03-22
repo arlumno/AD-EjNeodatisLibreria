@@ -80,7 +80,7 @@ public class App {
         });
         
         menu.addOpcion("Listado Autores por Nacionalidad", () -> {
-            app.listarAutoresPorNacionalidad();
+            app.listarNumeroAutoresPorNacionalidad();
         });        
         
         menu.addOpcion("Listado Libros del Autor", () -> {
