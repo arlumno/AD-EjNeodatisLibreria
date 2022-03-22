@@ -94,20 +94,30 @@ class AccionesApp {
         return autor;
     }
 
-    void test() {
-        Libro lib2;
-        try {
-            lib2 = new Libro(004, "Mancato", "Western", 12.95F, dateFormat.parse("04/11/2020"));
-            String text = Long.toString(obtenerCodLibro(lib2));
-            peticiones.SalidasGui.mensaje(text);
-        } catch (ParseException ex) {
-            Logger.getLogger(AccionesApp.class.getName()).log(Level.SEVERE, null, ex);
+    void runStopServer() {
+        StringBuilder anuncio = new StringBuilder();
+        if (OdbServer.isRun()) {
+            anuncio.append("Apagando servidor...\n");
+            if (OdbServer.stop()) {
+                anuncio.append("--- Servidor apagado con éxito ---");
+            } else {
+                anuncio.append("--- Error al apagar el servidor ---");
+            }
+        } else {
+            anuncio.append("Iniciando servidor...\n");
+            if (OdbServer.run()) {
+                anuncio.append("--- Servidor iniciado con éxito ---");
+            } else {
+                anuncio.append("--- Error al iniciar el servidor ---");
+            }
         }
+        peticiones.SalidasGui.mensaje(anuncio.toString());
+
     }
 
     void altaAutor() {
         try {
-            Libro lib1 = new Libro(1, "Historias para no dormir", "Drama", 20.95F, dateFormat.parse("13/04/2019"));            
+            Libro lib1 = new Libro(1, "Historias para no dormir", "Drama", 20.95F, dateFormat.parse("13/04/2019"));
             Autor a1 = new Autor("53170624Y", "Armando", "un lugar tranquilo 123", 38, Autor.NACIONALIDAD_ESP);
             Libro lib6 = new Libro(9, "Historias para seguir sin dormir", "Drama", 23.95F, dateFormat.parse("13/04/2020"));
             a1.addLibro(lib1);
@@ -174,7 +184,7 @@ class AccionesApp {
             Autor autor = obtenerAutor(dniAutor);
             if (autor != null) {
                 Libro libro = new Libro(003, "The Autonomo", "Terror", 36.95F, dateFormat.parse("25/09/2019"));
-                
+
                 int codLibro = obtenerCodLibro(libro);
                 if (codLibro == -1) {
                     autor.addLibro(libro);

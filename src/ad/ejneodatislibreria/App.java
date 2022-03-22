@@ -43,10 +43,11 @@ public class App {
         menu.setTextoSalir("Salir");
         log.addToLog("Iniciado el programa");
 
-        menu.addOpcion("TEST", () -> {
-            app.test();
+        menu.addLabel("Servidor");
+        menu.addOpcion("Iniciar/Parar Sevidor", () -> {
+            app.runStopServer();
         });
-        //menu.addLabel("Altas");
+        menu.addLabel("Altas");
         menu.addOpcion("Alta Autor", () -> {
             app.altaAutor();
         });
