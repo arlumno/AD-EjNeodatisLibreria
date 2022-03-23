@@ -20,15 +20,16 @@ public class OdbConnection {
         
     }
 
-    public static ODB getOdb() throws ODBRuntimeException, Exception{
+    public static ODB getOdb() throws Exception{
         if(odb == null || odb.isClosed()){
             try{               
                 odb = ODBFactory.openClient("localhost", OdbServer.PORT,OdbServer.BASE_DATOS);
             }catch(ODBRuntimeException e){ //TODO tratar excepciones en AccionesApp.
-                 peticiones.SalidasGui.mensaje("Error al conectarse a la base de datos. ODBRuntimeException");
-            }catch(Exception e){
-                 peticiones.SalidasGui.mensaje("Error al conectarse a la base de datos.");
+                throw new Exception("Error al conectarse a la base de datos. ODBRuntimeException");
             }
+//            }catch(Exception e){
+//                 peticiones.SalidasGui.mensaje("Error al conectarse a la base de datos.");
+//            }
         }        
         return odb;
     }

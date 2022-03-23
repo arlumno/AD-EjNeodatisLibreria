@@ -50,47 +50,47 @@ class AccionesApp {
         return resultado;
     }
 
-    private String obtenerDniAutor(Autor autor) {
+    private String obtenerDniAutor(Autor autor)  throws Exception{
         String resultado = null;
-        try {
+//        try {
             ICriterion filtro = Where.equal("dni", autor.getDni());
             IQuery query = new CriteriaQuery(Autor.class, filtro);
             Autor autorBD = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
             resultado = autorBD.getDni();
             //TODO resultado = objeto.
-        } catch (IndexOutOfBoundsException ex) {
-            //no hay resultados.
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
-        }
+//        } catch (IndexOutOfBoundsException ex) {
+//            //no hay resultados.
+//        } catch (Exception ex) {
+//            peticiones.SalidasGui.mensaje(ex.toString());
+//        }
         return resultado;
     }
 
-    private Libro obtenerLibro(int cod) {
+    private Libro obtenerLibro(int cod) throws Exception{
         Libro libro = null;
-        try {
+//        try {
             ICriterion filtro = Where.equal("cod", cod);
             IQuery query = new CriteriaQuery(Libro.class, filtro);
             libro = (Libro) OdbConnection.getOdb().getObjects(query).getFirst();
-        } catch (IndexOutOfBoundsException ex) {
-            peticiones.SalidasGui.mensaje("El libro indicado no existe.");
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
-        }
+//        } catch (IndexOutOfBoundsException ex) {
+//            peticiones.SalidasGui.mensaje("El libro indicado no existe.");
+//        } catch (Exception ex) {
+//            peticiones.SalidasGui.mensaje(ex.toString());
+//        }
         return libro;
     }
 
-    private Autor obtenerAutor(String dni) {
+    private Autor obtenerAutor(String dni) throws Exception{
         Autor autor = null;
-        try {
+//        try {
             ICriterion filtro = Where.equal("dni", dni);
             IQuery query = new CriteriaQuery(Autor.class, filtro);
             autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-        } catch (IndexOutOfBoundsException ex) {
-            peticiones.SalidasGui.mensaje("El autor indicado no existe.");
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
-        }
+//        } catch (IndexOutOfBoundsException ex) {
+//            peticiones.SalidasGui.mensaje("El autor indicado no existe.");
+//        } catch (Exception ex) {
+//            peticiones.SalidasGui.mensaje(ex.toString());
+//        }
         return autor;
     }
 
@@ -168,12 +168,6 @@ class AccionesApp {
 
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
-        } finally {
-            try {
-                OdbConnection.getOdb().close();
-            } catch (Exception ex) {
-                peticiones.SalidasGui.mensaje(ex.toString());
-            }
         }
 
     }
@@ -193,18 +187,12 @@ class AccionesApp {
                 }
                 OdbConnection.getOdb().store(autor);
 
-                //     OdbConnection.getOdb().commit();
                 peticiones.SalidasGui.mensaje("Guardado Libro: \n" + libro.toString());
             }
 
+            OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
-        } finally {
-            try {
-                OdbConnection.getOdb().close();
-            } catch (Exception ex) {
-                peticiones.SalidasGui.mensaje(ex.toString());
-            }
         }
 
     }
@@ -216,21 +204,15 @@ class AccionesApp {
             if (autor != null) {
                 String viejaDireccion = autor.getDireccion();
                 String nuevaDireccion = "el nuevo sitio " + ((int) (Math.random() * 1000));
-//                String nuevaDireccion = "happyland 321";
                 autor.setDireccion(nuevaDireccion);
 
                 OdbConnection.getOdb().store(autor);
                 peticiones.SalidasGui.mensaje("Actualizada la dirección de " + autor.getNombre() + "\n  " + viejaDireccion + " -> " + autor.getDireccion() + "\n Autor: \n " + autor.toString());
             }
 
+            OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
-        } finally {
-            try {
-                OdbConnection.getOdb().close();
-            } catch (Exception ex) {
-                peticiones.SalidasGui.mensaje(ex.toString());
-            }
         }
 
     }
@@ -242,41 +224,36 @@ class AccionesApp {
         float precioNuevo = (float) ((int) (Math.random() * 10000)) / 100;
         Autor autor = null;
         try {
-            ICriterion filtro = Where.equal("nombre", nombreAutor);
-            IQuery query = new CriteriaQuery(Autor.class, filtro);
-            autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-        } catch (IndexOutOfBoundsException ex) {
-            peticiones.SalidasGui.mensaje("El autor indicado no existe.");
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
-        }
-        if (autor != null) {
-            ArrayList<Libro> libros = autor.getLibros();
-            boolean encontrado = false;
-            for (Libro libro : libros) {
-                if (libro.getTitulo().equals(tituloLibro)) {
-                    precioAnterior = libro.getPrecio();
-                    libro.setPrecio(precioNuevo);
-                    encontrado = true;
-                }
+            try {
+                ICriterion filtro = Where.equal("nombre", nombreAutor);
+                IQuery query = new CriteriaQuery(Autor.class, filtro);
+                autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
+            } catch (IndexOutOfBoundsException ex) {
+                peticiones.SalidasGui.mensaje("El autor indicado no existe.");
             }
-            if (encontrado) {
-                try {
+            if (autor != null) {
+                ArrayList<Libro> libros = autor.getLibros();
+                boolean encontrado = false;
+                for (Libro libro : libros) {
+                    if (libro.getTitulo().equals(tituloLibro)) {
+                        precioAnterior = libro.getPrecio();
+                        libro.setPrecio(precioNuevo);
+                        encontrado = true;
+                    }
+                }
+                if (encontrado) {
+
                     OdbConnection.getOdb().store(autor);
                     peticiones.SalidasGui.mensaje("Actualizado el precio del libro: " + tituloLibro + "\nde " + precioAnterior + " a " + precioNuevo);
-                } catch (Exception ex) {
-                    peticiones.SalidasGui.mensaje(ex.toString());
+
+                } else {
+                    peticiones.SalidasGui.mensaje("No se ha encontrado el libro en el autor: " + autor.getNombre());
                 }
 
-            } else {
-                peticiones.SalidasGui.mensaje("No se ha encontrado el libro en el autor: " + autor.getNombre());
             }
-
-            try {
-                OdbConnection.getOdb().close();
-            } catch (Exception ex) {
-                peticiones.SalidasGui.mensaje(ex.toString());
-            }
+            OdbConnection.getOdb().close();
+        } catch (Exception ex) {
+            peticiones.SalidasGui.mensaje(ex.toString());
         }
     }
 
@@ -285,39 +262,38 @@ class AccionesApp {
         int codLibro = 003;
         Autor autor = null;
         try {
-            ICriterion filtro = Where.equal("nombre", nombreAutor);
-            IQuery query = new CriteriaQuery(Autor.class, filtro);
-            autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-        } catch (IndexOutOfBoundsException ex) {
-            peticiones.SalidasGui.mensaje("El autor indicado no existe.");
+            try {
+                ICriterion filtro = Where.equal("nombre", nombreAutor);
+                IQuery query = new CriteriaQuery(Autor.class, filtro);
+                autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
+            } catch (IndexOutOfBoundsException ex) {
+                peticiones.SalidasGui.mensaje("El autor indicado no existe.");
+            }
+            if (autor != null) {
+                ArrayList<Libro> libros = autor.getLibros();
+                Libro libroEliminar = null;
+                for (Libro libro : libros) {
+                    if (libro.getCod() == codLibro) {
+                        libroEliminar = libro;
+                    }
+                }
+                if (libroEliminar != null) {
+                    try {
+                        OdbConnection.getOdb().delete(libroEliminar);
+                        peticiones.SalidasGui.mensaje("Se ha eliminado el libro: " + libroEliminar.getTitulo() + "\ndel autor:  " + autor.getNombre());
+                    } catch (Exception ex) {
+                        peticiones.SalidasGui.mensaje(ex.toString());
+                    }
+
+                } else {
+                    peticiones.SalidasGui.mensaje("No se ha encontrado el libro en el autor: " + autor.getNombre());
+                }
+
+            }
+
+            OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
-        }
-        if (autor != null) {
-            ArrayList<Libro> libros = autor.getLibros();
-            Libro libroEliminar = null;
-            for (Libro libro : libros) {
-                if (libro.getCod() == codLibro) {
-                    libroEliminar = libro;
-                }
-            }
-            if (libroEliminar != null) {
-                try {
-                    OdbConnection.getOdb().delete(libroEliminar);
-                    peticiones.SalidasGui.mensaje("Se ha eliminado el libro: " + libroEliminar.getTitulo() + "\ndel autor:  " + autor.getNombre());
-                } catch (Exception ex) {
-                    peticiones.SalidasGui.mensaje(ex.toString());
-                }
-
-            } else {
-                peticiones.SalidasGui.mensaje("No se ha encontrado el libro en el autor: " + autor.getNombre());
-            }
-
-            try {
-                OdbConnection.getOdb().close();
-            } catch (Exception ex) {
-                peticiones.SalidasGui.mensaje(ex.toString());
-            }
         }
     }
 
@@ -332,10 +308,6 @@ class AccionesApp {
                 resultado.append(" >> " + ((Autor) autorObj).toString() + "\n");
             }
             peticiones.SalidasGui.mensaje(resultado.toString());
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
-        }
-        try {
             OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
@@ -360,8 +332,11 @@ class AccionesApp {
                 }
                 peticiones.SalidasGui.mensaje(resultado.toString());
             }
+            OdbConnection.getOdb().close();
         } catch (ParseException ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
+        } catch (Exception e) {
+            peticiones.SalidasGui.mensaje(e.toString());
         }
     }
 
@@ -387,14 +362,11 @@ class AccionesApp {
                 resultado.append(autor.getNombre() + "                " + autor.getEdad() + "                " + libros.toString() + "\n");
             }
             peticiones.SalidasGui.mensaje(resultado.toString());
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
-        }
-        try {
             OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
         }
+
     }
 
     void listarNumeroAutoresPorNacionalidad() {
@@ -416,33 +388,43 @@ class AccionesApp {
                 resultado.append(" >> " + ((Autor) autorObj).toString() + "\n");
             }
             peticiones.SalidasGui.mensaje(resultado.toString());
-
+            OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
         }
     }
 
     void listarLibrosAutor() {
-        String dni = "53170624Y";
-        Autor autor = obtenerAutor(dni);
-        if (autor != null) {
-            StringBuilder resultado = new StringBuilder();
-            resultado.append("Libros para el Autor: " + autor.getNombre() + ", Total:  " + autor.getLibros().size() + "\n");
-            for (Libro libro : autor.getLibros()) {
-                resultado.append("   >>> " + libro.toString() + "\n");
+        try {
+            String dni = "53170624Y";
+            Autor autor = obtenerAutor(dni);
+            if (autor != null) {
+                StringBuilder resultado = new StringBuilder();
+                resultado.append("Libros para el Autor: " + autor.getNombre() + ", Total:  " + autor.getLibros().size() + "\n");
+                for (Libro libro : autor.getLibros()) {
+                    resultado.append("   >>> " + libro.toString() + "\n");
+                }
+                peticiones.SalidasGui.mensaje(resultado.toString());
             }
-            peticiones.SalidasGui.mensaje(resultado.toString());
+            OdbConnection.getOdb().close();
+        } catch (Exception ex) {
+            peticiones.SalidasGui.mensaje(ex.toString());
         }
 
     }
 
     void listarDatosLibro() {
-        int cod = 3;
-        Libro libro = obtenerLibro(cod);
-        if (libro != null) {
-            StringBuilder resultado = new StringBuilder();
-            resultado.append("Datos libro:\n" + libro.toString());
-            peticiones.SalidasGui.mensaje(resultado.toString());
+        try {
+            int cod = 3;
+            Libro libro = obtenerLibro(cod);
+            if (libro != null) {
+                StringBuilder resultado = new StringBuilder();
+                resultado.append("Datos libro:\n" + libro.toString());
+                peticiones.SalidasGui.mensaje(resultado.toString());
+            }
+            OdbConnection.getOdb().close();
+        } catch (Exception ex) {
+            peticiones.SalidasGui.mensaje(ex.toString());
         }
     }
 
@@ -464,6 +446,7 @@ class AccionesApp {
             }
 
             peticiones.SalidasGui.mensaje(resultado.toString());
+            OdbConnection.getOdb().close();
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
         }
