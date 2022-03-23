@@ -8,11 +8,9 @@ import ad.ejneodatislibreria.pojos.Autor;
 import ad.ejneodatislibreria.pojos.Libro;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.neodatis.odb.ODBRuntimeException;
 import org.neodatis.odb.ObjectValues;
 import org.neodatis.odb.Values;
 import org.neodatis.odb.core.query.IQuery;
@@ -34,7 +32,7 @@ class AccionesApp {
 
     }
 
-    private int obtenerCodLibro(Libro libro) {
+    private int obtenerCodLibro(Libro libro) throws Exception {
         int resultado = -1;
         try {
             ICriterion filtro = Where.equal("cod", libro.getCod());
@@ -42,23 +40,9 @@ class AccionesApp {
             Libro libBD = (Libro) OdbConnection.getOdb().getObjects(query).getFirst();
             resultado = libBD.getCod();
             //TODO resultado = objeto.
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (ODBRuntimeException ex) {
             //no hay resultados.
-        } catch (Exception ex) {
-            peticiones.SalidasGui.mensaje(ex.toString());
         }
-        return resultado;
-    }
-
-    private String obtenerDniAutor(Autor autor)  throws Exception{
-        String resultado = null;
-//        try {
-            ICriterion filtro = Where.equal("dni", autor.getDni());
-            IQuery query = new CriteriaQuery(Autor.class, filtro);
-            Autor autorBD = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-            resultado = autorBD.getDni();
-            //TODO resultado = objeto.
-//        } catch (IndexOutOfBoundsException ex) {
 //            //no hay resultados.
 //        } catch (Exception ex) {
 //            peticiones.SalidasGui.mensaje(ex.toString());
@@ -66,31 +50,50 @@ class AccionesApp {
         return resultado;
     }
 
-    private Libro obtenerLibro(int cod) throws Exception{
+    private String obtenerDniAutor(Autor autor) throws Exception {
+        String resultado = null;
+        try {
+            ICriterion filtro = Where.equal("dni", autor.getDni());
+            IQuery query = new CriteriaQuery(Autor.class, filtro);
+            Autor autorBD = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
+            resultado = autorBD.getDni();
+            //TODO resultado = objeto.
+        } catch (ODBRuntimeException ex) {
+
+            //no hay resultados.
+        }
+//        } catch (Exception ex) {
+//            peticiones.SalidasGui.mensaje(ex.toString());
+//        }
+        return resultado;
+    }
+
+    private Libro obtenerLibro(int cod) throws Exception {
         Libro libro = null;
-//        try {
+        try {
             ICriterion filtro = Where.equal("cod", cod);
             IQuery query = new CriteriaQuery(Libro.class, filtro);
             libro = (Libro) OdbConnection.getOdb().getObjects(query).getFirst();
-//        } catch (IndexOutOfBoundsException ex) {
-//            peticiones.SalidasGui.mensaje("El libro indicado no existe.");
+        } catch (ODBRuntimeException ex) {
+            //no hay resultados.
+
 //        } catch (Exception ex) {
 //            peticiones.SalidasGui.mensaje(ex.toString());
-//        }
+        }
         return libro;
     }
 
-    private Autor obtenerAutor(String dni) throws Exception{
+    private Autor obtenerAutor(String dni) throws Exception {
         Autor autor = null;
-//        try {
+        try {
             ICriterion filtro = Where.equal("dni", dni);
             IQuery query = new CriteriaQuery(Autor.class, filtro);
             autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-//        } catch (IndexOutOfBoundsException ex) {
-//            peticiones.SalidasGui.mensaje("El autor indicado no existe.");
+        } catch (ODBRuntimeException ex) {
+            //no hay resultados.
 //        } catch (Exception ex) {
 //            peticiones.SalidasGui.mensaje(ex.toString());
-//        }
+        }
         return autor;
     }
 
@@ -142,27 +145,27 @@ class AccionesApp {
             if (obtenerDniAutor(a1) == null) {
 
                 OdbConnection.getOdb().store(a1);
-                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a1.toString());
+                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a1.toString() + "\n con libros: " + a1.getLibros().toString());
 
             }
 
             if (obtenerDniAutor(a2) == null) {
                 OdbConnection.getOdb().store(a2);
-                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a2.toString());
+                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a2.toString() + "\n con libros: " + a2.getLibros().toString());
             }
 
             if (obtenerDniAutor(a3) == null) {
                 OdbConnection.getOdb().store(a3);
-                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a3.toString());
+                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a3.toString() + "\n con libros: " + a3.getLibros().toString());
             }
 
             if (obtenerDniAutor(a4) == null) {
                 OdbConnection.getOdb().store(a4);
-                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a4.toString());
+                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a4.toString() + "\n con libros: " + a4.getLibros().toString());
             }
             if (obtenerDniAutor(a5) == null) {
                 OdbConnection.getOdb().store(a5);
-                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a5.toString());
+                peticiones.SalidasGui.mensaje("Guardado Autor: \n" + a5.toString() + "\n con libros: " + a5.getLibros().toString());
             }
             OdbConnection.getOdb().close();
 
@@ -228,7 +231,7 @@ class AccionesApp {
                 ICriterion filtro = Where.equal("nombre", nombreAutor);
                 IQuery query = new CriteriaQuery(Autor.class, filtro);
                 autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-            } catch (IndexOutOfBoundsException ex) {
+            } catch (ODBRuntimeException ex) {
                 peticiones.SalidasGui.mensaje("El autor indicado no existe.");
             }
             if (autor != null) {
@@ -266,7 +269,7 @@ class AccionesApp {
                 ICriterion filtro = Where.equal("nombre", nombreAutor);
                 IQuery query = new CriteriaQuery(Autor.class, filtro);
                 autor = (Autor) OdbConnection.getOdb().getObjects(query).getFirst();
-            } catch (IndexOutOfBoundsException ex) {
+            } catch (ODBRuntimeException ex) {
                 peticiones.SalidasGui.mensaje("El autor indicado no existe.");
             }
             if (autor != null) {
@@ -323,7 +326,7 @@ class AccionesApp {
             Autor autor = obtenerAutor(dni);
             if (autor != null) {
                 StringBuilder resultado = new StringBuilder();
-                resultado.append("Libros para el Autor: " + autor.getNombre() + "\n");
+                resultado.append("Libros para el Autor: " + autor.getNombre() + " entre " + fechaInicio.toString() + " y " + fechafin.toString() + "\n ");
                 for (Libro libro : autor.getLibros()) {
                     fechaLibro = libro.getFechaPublicacion();
                     if (fechaLibro.after(fechaInicio) && fechaLibro.before(fechafin)) {
@@ -415,14 +418,14 @@ class AccionesApp {
 
     void listarDatosLibro() {
         try {
-            int cod = 3;
+            int cod = 2;
             Libro libro = obtenerLibro(cod);
             if (libro != null) {
                 StringBuilder resultado = new StringBuilder();
                 resultado.append("Datos libro:\n" + libro.toString());
                 peticiones.SalidasGui.mensaje(resultado.toString());
             }
-            OdbConnection.getOdb().close();
+            OdbConnection.getOdb().close();            
         } catch (Exception ex) {
             peticiones.SalidasGui.mensaje(ex.toString());
         }
